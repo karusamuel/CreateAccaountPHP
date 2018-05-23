@@ -26,7 +26,7 @@ $DOB=$_POST['DOB'];
 $gender=$_POST['gender'];
 
 
-if($validate->validateEmail($email)){
+if(!$validate->validateEmail($email)){
 	$emailError ="Not a valid Email";
 	$regester=false;
 
@@ -78,16 +78,19 @@ if (!$validate->checkLength($lastName,4)) {
 if($password1==''){
 
 $password1Error=$validate->length0();
+ $regester = false;
 
 }
 if($password2==''){
 
 	$password2Error=$validate->length0();
+	$regester=false;
 
 }
 if($password1!=$password2){
 
 	$password2Error="Both passwords must be similar";
+	$regester=false;
 
 }
 
@@ -95,7 +98,29 @@ if($password1!=$password2){
 
 if($DOB=''){
 	$DOBError=$Validate->length0();
+	$regester=false;
 
+}
+
+if($gender == "Select"){
+
+	$genderError = "you Must select your gender";
+	$regester=false;
+}
+
+
+if($regester){
+	require('conn.php');
+
+if($connected){
+
+$stmt = $conn->prepare("insert into users(firstName,lastName,email,password,DOB,gender)values(?,?,?,?,?,?)");
+echo $conn->error;
+$stmt->bind_param("ssssss",$firstName,$lastName,$email,$password1,$DOB,$gender);
+echo $conn->error;
+$stmt->execute();
+echo $conn->error;
+}
 }
 
 
